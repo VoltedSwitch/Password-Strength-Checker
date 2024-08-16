@@ -52,6 +52,9 @@ def password_checker_step1(password_to_check1, specific_reason):
           specific_reason == "online shoppings account"):
         specific_reason = "online shopping account"
 
+    elif specific_reason == "business account":
+        specific_reason = "financial account"
+
 
     if specific_reason in length_requirements:
         min_len, max_len = length_requirements[specific_reason]
