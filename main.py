@@ -24,23 +24,41 @@ def clear_screen(seconds=None):
 def password_checker_step1(password_to_check1, specific_reason):
     feedback = {}
     length_requirements = {
-        "gmail account": (12, 16),
+        "email account": (12, 16),
         "social media account": (12, 16),
         "financial account": (16, 20),
         "online banking": (16, 20),
         "online shopping account": (12, 16),
         "work/corporate account": (12, 20),
         "wi-fi network": (16, 20),
-        "wifi network": (16, 20),
         "cloud storage account": (16, 20),
-        "device logins": (8, 12),
+        "device login": (8, 12),
         "password manager": (16, 20)
     }
+    if specific_reason.endswith("s"):
+        specific_reason = specific_reason[:-1]
+        
+    if specific_reason == "gmail account" or specific_reason == "emails account":
+        specific_reason = "email account"
+    
+    elif (specific_reason == "an account for work" or
+          specific_reason == "work account"):
+        specific_reason = "work/corporate account"
+    
+    elif specific_reason == "wifi network":
+        specific_reason = "wi-fi network"
+
+    elif (specific_reason == "shoppings account" or
+          specific_reason == "online shoppings account"):
+        specific_reason = "online shopping account"
+
 
     if specific_reason in length_requirements:
         min_len, max_len = length_requirements[specific_reason]
         if len(password_to_check1) not in range(min_len, max_len + 1):
-            feedback.update({specific_reason: f"{min_len} between {max_len} characters."})
+            feedback.update(
+                {specific_reason: f"{min_len} between {max_len} characters."}
+            )
 
     if feedback:
         return ("Recommended password length for " + "".join(feedback.keys())
