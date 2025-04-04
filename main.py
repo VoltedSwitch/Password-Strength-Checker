@@ -9,6 +9,7 @@ manipulation and validation.
 """
 import os
 import time
+import string
 
 
 # Utility Functions:
@@ -20,6 +21,7 @@ def clear_screen(seconds=None):
         os.system("cls" if os.name == "nt" else "clear")
     else:
         print("\033[31mInvalid input for clear_screen\033[0m")
+
 # Main-Program Related Functions:
 def password_checker_step1(password_to_check1, specific_reason):
     feedback = {}
@@ -35,21 +37,26 @@ def password_checker_step1(password_to_check1, specific_reason):
         "device login": (8, 12),
         "password manager": (16, 20)
     }
+
     if specific_reason.endswith("s"):
         specific_reason = specific_reason[:-1]
         
     if specific_reason == "gmail account" or specific_reason == "emails account":
         specific_reason = "email account"
     
-    elif (specific_reason == "an account for work" or
-          specific_reason == "work account"):
+    elif (
+        specific_reason == "an account for work" or
+        specific_reason == "work account"
+    ):
         specific_reason = "work/corporate account"
     
     elif specific_reason == "wifi network":
         specific_reason = "wi-fi network"
 
-    elif (specific_reason == "shoppings account" or
-          specific_reason == "online shoppings account"):
+    elif (
+          specific_reason == "shoppings account" or
+          specific_reason == "online shoppings account"
+    ):
         specific_reason = "online shopping account"
 
     elif specific_reason == "business account":
@@ -59,38 +66,60 @@ def password_checker_step1(password_to_check1, specific_reason):
     if specific_reason in length_requirements:
         min_len, max_len = length_requirements[specific_reason]
         if len(password_to_check1) not in range(min_len, max_len + 1):
-            feedback.update(
-                {specific_reason: f"{min_len} between {max_len} characters."}
-            )
+            feedback.update({specific_reason: f"{min_len} between {max_len} characters."})
 
     if feedback:
-        return ("Recommended password length for " + "".join(feedback.keys())
-                + " is " + "".join(feedback.values()))
+        return (
+            "Recommended password length for " 
+            + "".join(feedback.keys()) + 
+            " is " + 
+            "".join(feedback.values())
+        )
     else:
         bvalue = len(password_to_check1) < 8
         if bvalue:
             return "Your password is less than 8 characters"
  
 def password_checker_step2(password_to_check2):
-    password_patterns_numerical = {"123456789", "12345678", "1234567", 
-                             "123456", "12345", "1234",
-                             "123", "12", "1"}
+    password_patterns_numerical = {
+        "123456789",
+        "12345678",
+        "1234567", 
+        "123456",
+        "12345",
+        "1234",
+        "123",
+        "12",
+        "1"
+    }
     
-    password_patterns_alpabetical = {"abcdefghijklmnopqrstuvwxyz", "abcdefghijklmnopqrstuvwxy",
-                                      "abcdefghijklmnopqrstuvwx", "abcdefghijklmnopqrstuvw", 
-                                      "abcdefghijklmnopqrstuv", "abcdefghijklmnopqrstu", 
-                                      "abcdefghijklmnopqrst", "abcdefghijklmnopqrs", 
-                                      "abcdefghijklmnopqr", "abcdefghijklmnopq", 
-                                      "abcdefghijklmnop", "abcdefghijklmno",
-                                      "abcdefghijklmn", "abcdefghijkl", 
-                                      "abcdefghijk", "abcdefghij", 
-                                      "abcdefghi", "abcdefgh", 
-                                      "abcdefg", "abcdef", 
-                                      "abcde", "abcd", 
-                                      "abc", "ab",
-                                      "a"}
-
-    
+    password_patterns_alpabetical = {
+        "abcdefghijklmnopqrstuvwxyz",
+        "abcdefghijklmnopqrstuvwxy",
+        "abcdefghijklmnopqrstuvwx",
+        "abcdefghijklmnopqrstuvw", 
+        "abcdefghijklmnopqrstuv",
+        "abcdefghijklmnopqrstu", 
+        "abcdefghijklmnopqrst",
+        "abcdefghijklmnopqrs", 
+        "abcdefghijklmnopqr",
+        "abcdefghijklmnopq", 
+        "abcdefghijklmnop",
+        "abcdefghijklmno",
+        "abcdefghijklmn",
+        "abcdefghijkl", 
+        "abcdefghijk",
+        "abcdefghij", 
+        "abcdefghi",
+        "abcdefgh", 
+        "abcdefg",
+        "abcdef", 
+        "abcde",
+        "abcd", 
+        "abc",
+        "ab",
+        "a"
+    }
     
     has_numeric_order_pattern = any(pattern == password_to_check2 
                                     for pattern in password_patterns_numerical)
@@ -106,15 +135,17 @@ def password_checker_step2(password_to_check2):
         feedback.append("numeric order")
 
     if feedback:
-        return ("Your password follows " + ", ".join(feedback) + 
-                " which can be easy to guess!")
+        return (
+            "Your password follows "
+             + ", ".join(feedback) + 
+            " which can be easy to guess!"
+        )
 
     return ""
 
 def password_checker_step3(password_to_check3):
-    special_chars = {"!", "@", "#", "$", "%", "^", "&", "*", "(", ")",
-                     "-", "_", "=", "+", "[", "]", "{", "}", "|", ";",
-                     ":", ",", "<", ">", "?", "/"}
+    special_chars = set(string.punctuation)
+
     has_special_char = any(special_char in password_to_check3
                            for special_char in special_chars)
     has_upper_char = any(char.isupper() for char in password_to_check3)
@@ -137,6 +168,7 @@ def password_checker_step3(password_to_check3):
         return "Your password is unsecure! It lacks " + ", ".join(feedback) + "."
 
     return ""
+
 # Main Program Logic:
 while True:
    password_entered = input("Enter your password for checking: ").strip()
@@ -144,9 +176,10 @@ while True:
    print("Also tell us for what are you making a password for?" 
          " For Example: (Online Shopping Account) or (Gmail Account).")
    print()
-   specific_reason = input("Tell us so that we can provide a better service to you " 
-                          "if you have any, if not no need to say anything: "
-                          ).strip().lower()
+   specific_reason = input(
+        "Tell us so that we can provide a better service to you " 
+        "if you have any, if not no need to say anything: "
+   ).strip().lower()
    print()
    if password_entered:
        is_not_secure = password_checker_step1(password_entered, specific_reason)
@@ -176,10 +209,12 @@ while True:
                     print("Your password passed all 3 verification steps.")
                     print("Your password is secure!")
                     print()
-                    try_again = input("Do you want to try again? (y/n): ")
-                    if try_again.lower() == "y":
+                    try_again = input(
+                        "Do you want to try again? (y/n): "
+                    ).strip().lower()
+                    if try_again == "y":
                         clear_screen()
-                    elif try_again.lower() == "n":
+                    elif try_again == "n":
                         print("Thank you for using our password checker!")
                         break
    else:
